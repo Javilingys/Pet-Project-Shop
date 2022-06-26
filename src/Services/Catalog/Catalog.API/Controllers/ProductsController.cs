@@ -125,5 +125,23 @@ namespace Catalog.API.Controllers
 
             return NoContent();
         }
+
+        // GET api/v1/[controller]/ProductTypes
+        [HttpGet]
+        [Route("producttypes")]
+        [ProducesResponseType(typeof(List<ProductType>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<List<ProductType>>> CatalogTypesAsync()
+        {
+            return await _context.ProductTypes.ToListAsync();
+        }
+
+        // GET api/v1/[controller]/ProductBrands
+        [HttpGet]
+        [Route("productbrands")]
+        [ProducesResponseType(typeof(List<ProductBrand>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<List<ProductBrand>>> CatalogBrandsAsync()
+        {
+            return await _context.ProductBrands.ToListAsync();
+        }
     }
 }
