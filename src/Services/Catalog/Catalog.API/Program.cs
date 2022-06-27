@@ -1,7 +1,15 @@
 using Catalog.API.Data;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+
+Log.Logger = CreateSerilogLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((ctx, lc) =>
+{
+    lc.ReadFrom.Configuration(ctx.Configuration);
+});
 
 // Add services to the container.
 
@@ -35,3 +43,21 @@ app.MapControllers();
 await CatalogDbContextSeed.Seed(app);
 
 app.Run();
+
+// Create bootstrap logger before main logger inside Host>UseSerilog() will be configured
+Serilog.ILogger CreateSerilogLogger()
+{
+    return new LoggerConfiguration()
+        .MinimumLevel.Verbose()
+        .CreateBootstrapLogger();
+}
+
+IConfiguration GetConfiguration()
+{
+    var builder = new ConfigurationBuilder()
+        .SetBasePath(Directory.GetCurrentDirectory())
+        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+        .AddEnvironmentVariables();
+
+    return builder.Build();
+}
